@@ -25,24 +25,24 @@ public class TransactionService {
     TransactionRepository repository;
 
     @Autowired
-    UserService service;
+    UserService userService;
 
     @Autowired
     public RestTemplate restTemplate;
 
-    public List<Transaction> get() {
+    public List<Transaction> getTransactions() {
         return repository.findAll();
     }
 
-    public Transaction getById(Long id) {
+    public Transaction getByIdTransacion(Long id) {
         return repository.findById(id).orElseThrow(() ->
           new RuntimeException("Unable to perform the request")
         );
     }
 
     public Transaction createTransaction(TransactionDTO transaction) throws Exception {
-        User reciver = service.getById(transaction.reciverId());
-        User sender = service.getById(transaction.senderId());
+        User reciver = userService.getByIdUser(transaction.reciverId());
+        User sender = userService.getByIdUser(transaction.senderId());
 
         this.validateTransaction(sender, transaction.value());
 
@@ -56,8 +56,9 @@ public class TransactionService {
 
         repository.save(newTransaction);
         notificationService.sendNotifications(reciver, "transfer received");
-        service.post(sender);
-        service.post(reciver);
+        notificationService.sendNotifications(sender, "transfer sent");
+        userService.postUser(sender);
+        userService.postUser(reciver);
 
         return newTransaction;
     }

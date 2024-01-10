@@ -15,25 +15,25 @@ import java.util.List;
 public class TransactionController {
 
     @Autowired
-    TransactionService service;
+    TransactionService serviceTransacion;
 
     @GetMapping
-    public List<Transaction> getUser() {
+    public List<Transaction> get() {
         System.out.println("All Transactions");
-        return service.get();
+        return serviceTransacion.getTransactions();
     }
 
     @GetMapping( "{id}" )
     public ResponseEntity<Transaction> getById(@PathVariable Long id) {
         System.out.println("Transaction with id: " + id);
 
-        return ResponseEntity.ok(service.getById(id));
+        return ResponseEntity.ok(serviceTransacion.getByIdTransacion(id));
     }
 
     @PostMapping
     public ResponseEntity<TransactionDTO> post(@RequestBody TransactionDTO transaction) throws Exception {
         System.out.println("Carrying out transaction");
-        service.createTransaction(transaction);
+        serviceTransacion.createTransaction(transaction);
 
         return ResponseEntity.ok().body(transaction);
     }
